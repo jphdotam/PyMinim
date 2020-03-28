@@ -47,17 +47,33 @@ for patient in patients:
     id = patient.pop('id')
     minimiser.randomise_patient(id, patient)
 ```
-        
-We can see how well the system balanced the 2 arms:
 
-```python
-print(minimiser.characteristics_by_arm())
+We can see the table of patients and their allocated arms:
 ```
+>>> minimiser.df_patients
+        sex   age ethnicity smoker arm
+0      male   >50     white     no   B
+1    female  <=50     asian    yes   B
+2      male   >50     asian     no   B
+3    female  <=50     black     no   B
+4    female  <=50     white     no   B
+..      ...   ...       ...    ...  ..
+155    male  <=50     white     no   A
+156    male   >50     white     no   A
+157    male   >50     white     no   B
+158  female   >50     white     no   A
+159  female  <=50     white     no   B
+[160 rows x 5 columns]
 ```
->                               sex                      age                               ethnicity                  smoker
->   arm                                                        
->   A    {'male': 46, 'female': 34}  {'>50': 40, '<=50': 40}   {'white': 56, 'asian': 17, 'black': 7}  {'no': 59, 'yes': 21}
->   B    {'male': 45, 'female': 35}  {'>50': 40, '<=50': 40}   {'white': 57, 'asian': 14, 'black': 9}  {'no': 62, 'yes': 18}
+
+And we can see how well the system balanced the 2 arms:
+
+```
+>>> minimiser.characteristics_by_arm())
+                           sex                      age                               ethnicity                  smoker
+arm                                                        
+A    {'male': 46, 'female': 34}  {'>50': 40, '<=50': 40}   {'white': 56, 'asian': 17, 'black': 7}  {'no': 59, 'yes': 21}
+B    {'male': 45, 'female': 35}  {'>50': 40, '<=50': 40}   {'white': 57, 'asian': 14, 'black': 9}  {'no': 62, 'yes': 18}
 ```
 
 # Details
