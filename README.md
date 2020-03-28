@@ -28,7 +28,7 @@ From here on, it's easy to randomise patients with:
 minimiser.randomise_patient(id, characteristics)
 ```   
 
-Where id is a unique ID for the patient and characteristics is a dict of key:value pairs for the minimisation variables.
+Where ```id``` is a unique ID for the patient and ```characteristics``` is a dict of key:value pairs for the minimisation variables.
 
 For example, if we wanted to simulate randomising 160 patients using the above values, we could do something like this:
 
