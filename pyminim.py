@@ -93,8 +93,6 @@ class Minimiser:
             for arm in self.arms:
                 arm_totals[arm] += self.df_patients[(self.df_patients['arm'] == arm) & (self.df_patients[char_name] == char_val)].shape[0]
 
-        print(f"AT: {arm_totals}")
-
         min_arm, min_val = min(arm_totals, key=arm_totals.get), min(arm_totals.values())
         max_arm, max_val = max(arm_totals, key=arm_totals.get), max(arm_totals.values())
 
