@@ -88,27 +88,20 @@ class Minimiser:
         return random.choice(self.arms)
 
     def get_minimised_arm(self, characteristics: dict) -> str:
-        cols = characteristics.keys()
-        values = characteristics.values()
-        conditions = list(zip(cols, values))
-        rows_boolean = self.apply_conditions(self.df_patients, conditions)
-        rows = self.df_patients[rows_boolean]
-        if rows.shape[0] == 0:
+        arm_totals = {a:0 for a in self.arms}
+        for char_name, char_val in characteristics.items():
+            for arm in self.arms:
+                arm_totals[arm] += self.df_patients[(self.df_patients['arm'] == arm) & (self.df_patients[char_name] == char_val)].shape[0]
+
+        print(f"AT: {arm_totals}")
+
+        min_arm, min_val = min(arm_totals, key=arm_totals.get), min(arm_totals.values())
+        max_arm, max_val = max(arm_totals, key=arm_totals.get), max(arm_totals.values())
+
+        if min_val == max_val:  # Either both are 0 (first patient with any of these characteristics) or a draw
             arm = self.get_random_arm()
         else:
-            counts = rows['arm'].value_counts()
-
-            if len(counts) == 1:  # Only 1 arm has patients; randomise to other
-                only_arm = counts.idxmax()
-                other_arm = [a for a in self.arms if a != only_arm]
-                assert len(other_arm) == 1
-                arm = other_arm[0]
-
-            else:  # Both arms have at least 1 patient
-                if counts.max() == counts.min():  # Arms have equal numbers
-                    arm = self.get_random_arm()
-                else:  # Arms has differing numbers, assign to arm with fewest patients
-                    arm = counts.idxmin()
+            arm = min_arm
 
         return arm
 
@@ -117,16 +110,6 @@ class Minimiser:
         characteristics['arm'] = arm
         df_patient = pd.DataFrame(patient, index=[id])
         self.df_patients = self.df_patients.append(df_patient)
-
-    @staticmethod
-    def apply_conditions(df, conditions) -> pd.DataFrame:
-        """Thanks to https://stackoverflow.com/a/43370439"""
-        assert len(conditions) > 0
-        comps = [df[c] == v for c, v in conditions]
-        result = comps[0]
-        for comp in comps[1:]:
-            result &= comp
-        return result
 
 
 if __name__ == "__main__":
@@ -162,6 +145,9 @@ if __name__ == "__main__":
 
     # Print basic outputs
     print(minimiser)
+
+    # Print patients
+    print(minimiser.df_patients)
 
     pd.set_option('display.max_columns', None)
 
