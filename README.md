@@ -64,5 +64,6 @@ print(minimiser.characteristics_by_arm())
 
 * THIS SYSTEM IS NOT YET FULLY TESTED
 * Currently only works for 1:1 randomisation.
+* 20% of the time (by default) a patient will be 'truly randomised' rather than minimised.
 * First patient will be truly randomised, by default using their ID as a seed to make reproducibility easier (can be disabled)
 * When arms are equally balanaced, allocation is random
