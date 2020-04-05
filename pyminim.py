@@ -37,7 +37,7 @@ class Minimiser:
                f"{self.df_patients.shape[0]} patients"
 
     def characteristics_by_arm(self) -> pd.DataFrame:
-        return minimiser.df_patients.groupby(['arm']).aggregate(Counter)
+        return self.df_patients.groupby(['arm']).aggregate(Counter)
 
     def create_patient_dataframe(self) -> pd.DataFrame:
         """Returns a dataframe of string types with a column for each minimisation variable, and the arm"""
@@ -82,7 +82,8 @@ class Minimiser:
                 arm = self.get_random_arm()
 
         self._add_patient_to_arm(id, characteristics, arm)
-        print(f"Randomised patient {id} to {arm}")
+        #print(f"Randomised patient {id} to {arm}")
+        return arm
 
     def get_random_arm(self) -> str:
         return random.choice(self.arms)
@@ -90,6 +91,7 @@ class Minimiser:
     def get_minimised_arm(self, characteristics: dict) -> str:
         arm_totals = {a:0 for a in self.arms}
         for char_name, char_val in characteristics.items():
+            assert char_val in self.minimisation_vars[char_name], f"Value for {char_name} must be {self.minimisation_vars[char_name]} but got {char_val}"
             for arm in self.arms:
                 arm_totals[arm] += self.df_patients[(self.df_patients['arm'] == arm) & (self.df_patients[char_name] == char_val)].shape[0]
 
@@ -104,9 +106,10 @@ class Minimiser:
         return arm
 
     def _add_patient_to_arm(self, id: str, characteristics: dict, arm: str):
-        assert id not in self.df_patients, f"Patient {id} already in patient list!"
+        if id in list(self.df_patients.index.values):
+            raise AttributeError(f"Patient {id} already in randomised list ({self.df_patients.index.values})!")
         characteristics['arm'] = arm
-        df_patient = pd.DataFrame(patient, index=[id])
+        df_patient = pd.DataFrame(characteristics, index=[id])
         self.df_patients = self.df_patients.append(df_patient)
 
 
